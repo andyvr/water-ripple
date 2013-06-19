@@ -51,7 +51,7 @@ $("#ripple").waterripple({ arbitrary: 5000 });
 ## Available parameters/options:
 **arbitrary**
 
-_type: int, default: 1000_ - time in miliseconds to generate a new random water ripple. By default it generates a new ripple every second. 0 - turs off random ripples
+_type: int, default: 1000_ - time in miliseconds to generate a new random water ripple. By default it generates a new ripple every second. 0 - turns off random ripples
 
 **onclick**
 
