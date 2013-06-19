@@ -22,13 +22,14 @@ There are quite a few code snipplets on the internet to simulate water ripples i
 **Add an image or a div tag with the image background to the body:**
 
 ```
-<img id="ripple" src="landscape-wallpaper-1.jpg" />
+<img id="ripple" src="image.jpg" />
 ```
 
 or
 
 ```
-<div id="ripple" style="background-image:url(landscape-wallpaper-1.jpg);width:600px;height:300px;"></div>
+<div id="ripple" style="background-image:url(image.jpg);width:600px;height:300px;">
+</div>
 ```
 
 **Run the plugin:**
