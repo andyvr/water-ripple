@@ -3,7 +3,7 @@ water-ripple
 
 Water ripples effect in javascript.
 
-This javascript jQuery plugin to simulateWat water ripples on the surface of an image. 
+This javascript jQuery plugin to simulate water ripples on the surface of an image. 
 There are quite a few code snipplets on the internet to simulate water ripples in javascript-canvas. However the problem with them is that they're published as bare-bone scripts with the settings hard coded inside the script. So the main task of this script is to give the developer an option to run this cool animation as the jQuery plugin.
 See the demo: http://andyvr.github.io/water-ripple/demo/
 
