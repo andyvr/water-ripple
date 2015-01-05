@@ -2,10 +2,9 @@
  * Water ripple effect.
  * Original code (Java) by Neil Wallis
  * Code snipplet adapted to Javascript by Sergey Chikuyonok
- * Code re-written as jQuery plugin by Andrei Varabyou
+ * Code re-written as jQuery plugin by Andy V.
  */
 ;(function ( $, window, document, undefined ) {
-    var scope = {};
 	var pluginName = "waterripple",
         defaults = {
             delay		: 30,		//delay before re-drawing the next frame
@@ -20,18 +19,20 @@
         this.options = $.extend( {}, defaults, options );
         this._defaults = defaults;
         this._name = pluginName;
-		var that = this;
-		var imgSrc;
-		if(element.tagName == "IMG") imgSrc = $(element).attr("src");
+		if(element.tagName == "IMG") {
+            var imgSrc = $(this.element).attr("src");
+        }
 		else {
-			var backgroundImage = $(element).css('background-image');
+			var backgroundImage = $(this.element).css('background-image');
 			if(backgroundImage != "none"){
-				var pattern = /url\("{0,1}([^"]*)"{0,1}\)/;                
-				imgSrc = pattern.exec(backgroundImage)[1];                
+				var pattern = /url\(['"]?(.+)['"]?\)/;                
+				var imgSrc = pattern.exec(backgroundImage)[1];                
 			}
 		}
-		if(imgSrc) {
-			that.image = $("<img/>") // Make in memory copy of image to avoid css issues
+		if((typeof imgSrc !== 'undefined')) {
+			var that = this;
+            this.image = $("<img/>") // Make in memory copy of image to avoid css issues
+            .attr("crossOrigin", "anonymous")
 			.attr("src", imgSrc)
 			.load(function() {
 				that.init();
@@ -40,6 +41,7 @@
     }
     Plugin.prototype = {
         init: function() {
+            var scope = {};
             scope.canvas		= document.createElement('canvas');
 			$(this.element).after(scope.canvas);
 			scope.ctx			= scope.canvas.getContext('2d');
@@ -60,8 +62,7 @@
 			scope.count			= scope.height / scope.line_width;
 			scope.canvas.width	= scope.width;
 			scope.canvas.height	= scope.height;
-			if(this.element.tagName == "IMG") scope.ctx.drawImage(this.element, 0, 0);
-			else scope.ctx.drawImage(this.image[0], 0, 0);
+			scope.ctx.drawImage(this.image[0], 0, 0);
 			$(this.element).hide();
 			scope.texture		= scope.ctx.getImageData(0, 0, scope.width, scope.height);
 			scope.ripple		= scope.ctx.getImageData(0, 0, scope.width, scope.height);
@@ -69,23 +70,23 @@
 				scope.last_map[i] = scope.ripplemap[i] = 0;
 			}
 			//run main loop
-			setInterval(run, scope.delay);
+			setInterval(function() { run.call(scope); }, scope.delay);
 			// generate random ripples
-			if(this.options.arbitrary && this.options.arbitrary != 0) {
+			if(this.options.arbitrary > 0) {
 				var rnd = Math.random;
-				disturb(rnd() * scope.width, rnd() * scope.height);
+				disturb.call(scope, rnd() * scope.width, rnd() * scope.height);
 				setInterval(function() {
-					disturb(rnd() * scope.width, rnd() * scope.height);
+					disturb.call(scope, rnd() * scope.width, rnd() * scope.height);
 				}, this.options.arbitrary);
 			}
 			if(this.options.onclick) {
 				scope.canvas.onclick = function(evt) {
-					disturb(evt.offsetX || evt.layerX, evt.offsetY || evt.layerY);
+					disturb.call(scope, evt.offsetX || evt.layerX, evt.offsetY || evt.layerY);
 				};
 			}
 			if(this.options.onmove) {
 				scope.canvas.onmousemove = function(evt) {
-					disturb(evt.offsetX || evt.layerX, evt.offsetY || evt.layerY);
+					disturb.call(scope, evt.offsetX || evt.layerX, evt.offsetY || evt.layerY);
 				};
 			}
         },
@@ -101,8 +102,8 @@
 	 * Main loop
 	 */
 	function run() {
-		newframe();
-		scope.ctx.putImageData(scope.ripple, 0, 0);
+		newframe(this);
+		this.ctx.putImageData(this.ripple, 0, 0);
 	}
 	/**
 	 * Disturb water at specified point
@@ -110,16 +111,16 @@
 	function disturb(dx, dy) {
 		dx <<= 0;
 		dy <<= 0;
-		for (var j = dy - scope.riprad; j < dy + scope.riprad; j++) {
-			for (var k = dx - scope.riprad; k < dx + scope.riprad; k++) {
-				scope.ripplemap[scope.oldind + (j * scope.width) + k] += 512;
+		for (var j = dy - this.riprad; j < dy + this.riprad; j++) {
+			for (var k = dx - this.riprad; k < dx + this.riprad; k++) {
+				this.ripplemap[this.oldind + (j * this.width) + k] += 512;
 			}
 		}
 	}
 	/**
 	 * Generates new ripples
 	 */
-	function newframe() {
+	function newframe(scope) {
 		var i, a, b, data, cur_pixel, new_pixel, old_data;
 		i = scope.oldind;
 		scope.oldind = scope.newind;
